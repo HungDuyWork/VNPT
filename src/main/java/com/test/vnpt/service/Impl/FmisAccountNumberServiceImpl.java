@@ -6,6 +6,8 @@ import com.test.vnpt.dto.request.UpdateAccountRequest;
 import com.test.vnpt.dto.response.AccountFilterResponse;
 import com.test.vnpt.dto.response.AccountResponse;
 import com.test.vnpt.entity.FmisAccountNumber;
+import com.test.vnpt.enums.AccountStatus;
+import com.test.vnpt.enums.FmisAccountType;
 import com.test.vnpt.mapper.AccountTypeMapper;
 import com.test.vnpt.mapper.BankCodeMapper;
 import com.test.vnpt.mapper.UserMapper;
@@ -32,12 +34,21 @@ public class FmisAccountNumberServiceImpl implements FmisAccountNumberService {
 
     @Override
     public List<AccountFilterResponse> filterAccounts(AccountFilterRequest request) {
-        List<FmisAccountNumber> entities =  fmisAccountNumberRepository.filterAccounts(
+        Integer statusValue = AccountStatus.fromLabel(request.getStatus()) != null
+                ? AccountStatus.fromLabel(request.getStatus()).getValue()
+                : -1;
+
+        Integer fmisValue = FmisAccountType.fromName(request.getFmisAccountType()) != null
+                ? FmisAccountType.fromName(request.getFmisAccountType()).getValue()
+                : -1;
+
+        List<FmisAccountNumber> entities = fmisAccountNumberRepository.filterAccounts(
                 request.getBankCode(),
-                (request.getStatus() == null) ? -1 : request.getStatus().getValue(),
-                (request.getFmisAccountType() == null) ? -1 : request.getFmisAccountType().getValue(),
+                statusValue,
+                fmisValue,
                 request.getAccountNumber()
         );
+
         return userMapper.toResponseList(entities);
     }
 
@@ -45,7 +56,7 @@ public class FmisAccountNumberServiceImpl implements FmisAccountNumberService {
     public AccountResponse findAccount(String accountNumber) {
         FmisAccountNumber account = fmisAccountNumberRepository.findByAccountNumber(accountNumber);
         if (account == null) {
-            throw new RuntimeException("Account not found");
+            throw new RuntimeException("Tài khoản không tồn tại");
         }
         return userMapper.toAcountResponse(account);
     }
@@ -84,15 +95,26 @@ public class FmisAccountNumberServiceImpl implements FmisAccountNumberService {
 
     @Override
     public void updateAccount(String accountNumber, String bankCode, UpdateAccountRequest request) {
-        if (!request.getAccountNumber().equals(accountNumber)
-                && fmisAccountNumberRepository.existsByAccountNumberAndBankCode(request.getAccountNumber(), bankCode)) {
-            throw new IllegalArgumentException("Số tài khoản đã tồn tại");
-        }
         FmisAccountNumber account = fmisAccountNumberRepository.findByAccountNumberAndBankCode(accountNumber, bankCode);
         if (account == null) {
             throw new EntityNotFoundException("Tài khoản không tồn tại");
         }
+
+        if (!request.getAccountNumber().equals(accountNumber)
+                && fmisAccountNumberRepository.existsByAccountNumberAndBankCode(request.getAccountNumber(), bankCode)) {
+            throw new IllegalArgumentException("Số tài khoản đã tồn tại");
+        }
         // Cập nhật thông tin tài khoản
         userMapper.updateAccountFromRequest(request, account);
+    }
+
+    @Override
+    public void deleteAccount(String accountNumber, String bankCode) {
+        FmisAccountNumber account = fmisAccountNumberRepository.findByAccountNumberAndBankCode(accountNumber, bankCode);
+        if (account == null) {
+            throw new EntityNotFoundException("Tài khoản không tồn tại");
+        } else {
+            account.setStatus(-1); // Đánh dấu là không hoạt động
+        }
     }
 }

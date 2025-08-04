@@ -18,6 +18,7 @@ public interface UserMapper {
     @Mapping(target = "fmisAccountId", expression = "java(com.test.vnpt.enums.FmisAccountType.fromValue(account.getFmisAccountId()))")
     AccountFilterResponse toResponse(FmisAccountNumber account);
 
+
     List<AccountFilterResponse> toResponseList(List<FmisAccountNumber> accounts);
 
     @Named("statusToLabel")

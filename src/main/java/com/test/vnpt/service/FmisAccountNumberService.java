@@ -20,4 +20,6 @@ public interface FmisAccountNumberService {
     AccountResponse getAccountByAccountNumberAndBankCode(String accountNumber, String bank);
     // 6. Update Tài Khoản
     void updateAccount(String accountNumber, String bankCode, UpdateAccountRequest request);
+    // 7. Xoá Tài Khoản
+    void deleteAccount(String accountNumber, String bankCode);
 }

@@ -6,7 +6,7 @@ import java.util.Objects;
 public enum AccountStatus {
     ALL(-1, "Tất cả"),
     ACTIVE(1, "Hoạt động"),
-    INACTIVE(2, "Không hoạt động");
+    INACTIVE(0, "Không hoạt động");
 
     private final int value;
     private final String label;

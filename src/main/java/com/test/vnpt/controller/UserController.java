@@ -66,4 +66,16 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+    // 6. Xoá Tài Khoản
+    @DeleteMapping("/{accountNumber}/{bankCode}")
+    public ResponseEntity<?> deleteAccount(@PathVariable String accountNumber, @PathVariable String bankCode) {
+        try {
+            fmisAccountNumberService.deleteAccount(accountNumber, bankCode);
+            return ResponseEntity.ok("Xoá tài khoản thành công");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
