@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -49,7 +50,7 @@ public class FmisAccountNumberServiceImpl implements FmisAccountNumberService {
 
     @Override
     public void createAccount(CreateAccountRequest request) {
-        if (fmisAccountNumberRepository.existsByAccountNumber(request.getAccountNumber())) {
+        if (fmisAccountNumberRepository.existsByAccountNumberAndBankCode(request.getAccountNumber(), request.getBankCode())) {
             throw new IllegalArgumentException("Tài khoản đã tồn tại");
         }
         // Kiểm tra mã ngân hàng
@@ -67,13 +68,10 @@ public class FmisAccountNumberServiceImpl implements FmisAccountNumberService {
                 .uploadAgainStatus(0)
                 .type(type)
                 .description(request.getDescription())
+                .createDate(new Date())
                 .build();
-        System.out.println("Trying to save ID: " + entity.getId());
-
 
         fmisAccountNumberRepository.save(entity);
-        System.out.println("Saved entity with ID: " + entity.getId());
-
     }
 
 }

@@ -27,7 +27,7 @@ public class UserController {
         return ok(codes);
     }
 
-    // 2. Lọc Tài Khoản
+    // 2. tìm kiếm
     @PostMapping("/filter")
     public ResponseEntity<List<AccountFilterResponse>> filter(@RequestBody AccountFilterRequest request) {
         return ok(fmisAccountNumberService.filterAccounts(request));
