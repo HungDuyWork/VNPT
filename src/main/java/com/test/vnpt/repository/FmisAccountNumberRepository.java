@@ -26,7 +26,9 @@ public interface FmisAccountNumberRepository extends JpaRepository<FmisAccountNu
 
     @Query(value = "SELECT * FROM FMIS_ACCOUNT_NUMBER WHERE ACCOUNT_NUMBER = :accountNumber", nativeQuery = true)
     FmisAccountNumber findByAccountNumber(@Param("accountNumber") String accountNumber);
-
+    // Kiểm tra xem tài khoản đã tồn tại hay chưa
     boolean existsByAccountNumberAndBankCode(String accountNumber, String bankCode);
+    // 5. Tìm Tài Khoản bằng AccountNumber + BankCode để update
+    FmisAccountNumber findByAccountNumberAndBankCode(String accountNumber, String bankCode);
 }
 

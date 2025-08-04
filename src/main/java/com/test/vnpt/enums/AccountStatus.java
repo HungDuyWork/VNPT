@@ -28,4 +28,12 @@ public enum AccountStatus {
         }
         return "Không xác định";
     }
+    public static AccountStatus fromLabel(String label) {
+        for (AccountStatus s : values()) {
+            if (Objects.equals(s.getLabel(), label)) {
+                return s;
+            }
+        }
+        return null;
+    }
 }

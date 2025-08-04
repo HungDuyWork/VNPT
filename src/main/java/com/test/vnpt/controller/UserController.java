@@ -2,9 +2,11 @@ package com.test.vnpt.controller;
 
 import com.test.vnpt.dto.request.AccountFilterRequest;
 import com.test.vnpt.dto.request.CreateAccountRequest;
+import com.test.vnpt.dto.request.UpdateAccountRequest;
 import com.test.vnpt.dto.response.AccountFilterResponse;
 import com.test.vnpt.dto.response.AccountResponse;
 import com.test.vnpt.service.FmisAccountNumberService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,9 +44,26 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    // 4. Tìm Tài Khoản bằng AccountNumber
-    @GetMapping("/find-account/{accountNumber}")
-    public ResponseEntity<AccountResponse> findAccount(@PathVariable String accountNumber) {
-        return ok(fmisAccountNumberService.findAccount(accountNumber));
+    // 4. Tìm Tài Khoản bằng AccountNumber + BankCode để update
+    @GetMapping("/{accountNumber}/{bankCode}")
+    public ResponseEntity<AccountResponse> getAccountForEdit(@PathVariable String accountNumber, @PathVariable String bankCode) {
+        try {
+            AccountResponse account = fmisAccountNumberService.getAccountByAccountNumberAndBankCode(accountNumber, bankCode);
+            return ResponseEntity.ok(account);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    // 5. Update Tài Khoản
+    @PutMapping("/{accountNumber}/{bankCode}")
+    public ResponseEntity<?> updateAccount(@PathVariable String accountNumber, @PathVariable String bankCode, @Valid @RequestBody UpdateAccountRequest request) {
+        try {
+            fmisAccountNumberService.updateAccount(accountNumber, bankCode, request);
+            return ResponseEntity.ok("Cập nhật tài khoản thành công");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

@@ -19,5 +19,14 @@ public enum FmisAccountType {
         }
         return "Unknown";
     }
+    public static FmisAccountType fromName(String name) {
+        for (FmisAccountType type : values()) {
+            if (Objects.equals(type.name(), name)) {
+                return type;
+            }
+        }
+        return null;
+    }
+
 
 }

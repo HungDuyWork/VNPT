@@ -2,6 +2,7 @@ package com.test.vnpt.service.Impl;
 
 import com.test.vnpt.dto.request.AccountFilterRequest;
 import com.test.vnpt.dto.request.CreateAccountRequest;
+import com.test.vnpt.dto.request.UpdateAccountRequest;
 import com.test.vnpt.dto.response.AccountFilterResponse;
 import com.test.vnpt.dto.response.AccountResponse;
 import com.test.vnpt.entity.FmisAccountNumber;
@@ -10,6 +11,7 @@ import com.test.vnpt.mapper.BankCodeMapper;
 import com.test.vnpt.mapper.UserMapper;
 import com.test.vnpt.repository.FmisAccountNumberRepository;
 import com.test.vnpt.service.FmisAccountNumberService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -74,4 +76,23 @@ public class FmisAccountNumberServiceImpl implements FmisAccountNumberService {
         fmisAccountNumberRepository.save(entity);
     }
 
+    @Override
+    public AccountResponse getAccountByAccountNumberAndBankCode(String accountNumber, String bank) {
+        FmisAccountNumber account = fmisAccountNumberRepository.findByAccountNumberAndBankCode(accountNumber, bank);
+        return userMapper.toAcountResponse(account);
+    }
+
+    @Override
+    public void updateAccount(String accountNumber, String bankCode, UpdateAccountRequest request) {
+        if (!request.getAccountNumber().equals(accountNumber)
+                && fmisAccountNumberRepository.existsByAccountNumberAndBankCode(request.getAccountNumber(), bankCode)) {
+            throw new IllegalArgumentException("Số tài khoản đã tồn tại");
+        }
+        FmisAccountNumber account = fmisAccountNumberRepository.findByAccountNumberAndBankCode(accountNumber, bankCode);
+        if (account == null) {
+            throw new EntityNotFoundException("Tài khoản không tồn tại");
+        }
+        // Cập nhật thông tin tài khoản
+        userMapper.updateAccountFromRequest(request, account);
+    }
 }
