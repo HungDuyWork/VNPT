@@ -12,7 +12,7 @@ public class AccountFilterResponse {
     String bankCode;   // Mã ngân hàng
     String accountNumber; // Số tài khoản
     String maNh; // Mã ngân hàng
-    String description; // Mô tả
+    String description; // Loại tài khoản
     String status; // Trạng thái tài khoản (hoạt động, không hoạt động)
     String fmisAccountId; // Loại tài khoản FMIS (Sandbox, Live)
 }

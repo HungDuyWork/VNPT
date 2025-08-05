@@ -18,8 +18,7 @@ public class CreateAccountRequest {
             regexp = "^[0-9.\\s]+$",
             message = "Số tài khoản chỉ được bao gồm ký tự số, dấu chấm và khoảng trắng"
     )
-    String accountNumber; // Số tài khoản
-
-    String description; // Mô tả
-    String fmisAccountId;
+    String accountNumber;
+    Integer type;
+    Integer fmisAccountId;
 }

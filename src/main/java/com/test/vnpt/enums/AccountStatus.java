@@ -20,20 +20,4 @@ public enum AccountStatus {
 
     public String getLabel() { return label; }
 
-    public static String fromValue(Integer value) {
-        for (AccountStatus s : values()) {
-            if (Objects.equals(s.getValue(), value)) {
-                return s.getLabel();
-            }
-        }
-        return "Không xác định";
-    }
-    public static AccountStatus fromLabel(String label) {
-        for (AccountStatus s : values()) {
-            if (Objects.equals(s.getLabel(), label)) {
-                return s;
-            }
-        }
-        return null;
-    }
 }

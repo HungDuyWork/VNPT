@@ -13,6 +13,8 @@ import lombok.experimental.FieldDefaults;
 public class AccountFilterRequest {
     String bankCode;
     String accountNumber;
-    String status;
-    String fmisAccountType;
+    Integer status;
+    Integer fmisAccountType;
+    Integer page = 0;
+    Integer size = 20;
 }

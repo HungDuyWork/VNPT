@@ -17,8 +17,8 @@ public class UpdateAccountRequest {
             message = "Số tài khoản chỉ được bao gồm ký tự số, dấu chấm và khoảng trắng"
     )
     String accountNumber; // Số tài khoản
-    String description; // Mô tả
+    Integer type; // Mô tả
     String maNh;
-    String status; // Trạng thái tài khoản (hoạt động, không hoạt động)
-    String fmisAccountId; // Loại tài khoản FMIS (Sandbox, Live)
+    Integer status; // Trạng thái tài khoản (hoạt động, không hoạt động)
+    Integer fmisAccountId; // Loại tài khoản FMIS (Sandbox, Live)
 }

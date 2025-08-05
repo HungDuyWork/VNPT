@@ -5,6 +5,7 @@ import com.test.vnpt.dto.request.CreateAccountRequest;
 import com.test.vnpt.dto.request.UpdateAccountRequest;
 import com.test.vnpt.dto.response.AccountFilterResponse;
 import com.test.vnpt.dto.response.AccountResponse;
+import com.test.vnpt.dto.response.ApiResponse;
 import com.test.vnpt.service.FmisAccountNumberService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -14,8 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.ResponseEntity.ok;
-
 @RestController
 @RequestMapping("/api/accounts")
 public class UserController {
@@ -24,47 +23,34 @@ public class UserController {
 
     //1. Tìm Mã Ngân Hàng
     @GetMapping("/find-bank-code")
-    public ResponseEntity<List<String>> getBankCodes() {
+    ApiResponse<List<String>> getBankCodes() {
         List<String> codes = fmisAccountNumberService.getAllBankCodes();
-        return ok(codes);
+        return ApiResponse.<List<String>>builder()
+                .result(codes)
+                .build();
     }
 
     // 2. tìm kiếm
     @PostMapping("/filter")
-    public ResponseEntity<List<AccountFilterResponse>> filter(@RequestBody AccountFilterRequest request) {
-        return ok(fmisAccountNumberService.filterAccounts(request));
+    ApiResponse<List<AccountFilterResponse>> filterAccounts(@RequestBody @Valid AccountFilterRequest request) {
+        return ApiResponse.<List<AccountFilterResponse>>builder()
+                .result(fmisAccountNumberService.filterAccounts(request))
+                .build();
     }
-    // 3. Tạo Tài Khoản
+    // 3. Thêm tài khoản
     @PostMapping("/create")
-    public ResponseEntity<?> createAccount(@Valid @RequestBody CreateAccountRequest request) {
-        try {
-            fmisAccountNumberService.createAccount(request);
-            return ResponseEntity.ok("Tạo tài khoản thành công");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    ApiResponse<AccountResponse> createAccount(@Valid @RequestBody CreateAccountRequest request) {
+        return ApiResponse.<AccountResponse>builder()
+                .result(fmisAccountNumberService.createAccount(request))
+                .build();
     }
-    // 4. Tìm Tài Khoản bằng AccountNumber + BankCode để update
-    @GetMapping("/{accountNumber}/{bankCode}")
-    public ResponseEntity<AccountResponse> getAccountForEdit(@PathVariable String accountNumber, @PathVariable String bankCode) {
-        try {
-            AccountResponse account = fmisAccountNumberService.getAccountByAccountNumberAndBankCode(accountNumber, bankCode);
-            return ResponseEntity.ok(account);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+
     // 5. Update Tài Khoản
     @PutMapping("/{accountNumber}/{bankCode}")
-    public ResponseEntity<?> updateAccount(@PathVariable String accountNumber, @PathVariable String bankCode, @Valid @RequestBody UpdateAccountRequest request) {
-        try {
-            fmisAccountNumberService.updateAccount(accountNumber, bankCode, request);
-            return ResponseEntity.ok("Cập nhật tài khoản thành công");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    ApiResponse<AccountResponse> updateAccount(@PathVariable String accountNumber, @PathVariable String bankCode, @Valid @RequestBody UpdateAccountRequest request) {
+        return ApiResponse.<AccountResponse>builder()
+                .result(fmisAccountNumberService.updateAccount(accountNumber, bankCode, request))
+                .build();
     }
     // 6. Xoá Tài Khoản
     @DeleteMapping("/{accountNumber}/{bankCode}")
