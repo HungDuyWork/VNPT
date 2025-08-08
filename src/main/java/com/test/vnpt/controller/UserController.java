@@ -34,6 +34,7 @@ public class UserController {
     @PostMapping("/filter")
     ApiResponse<List<AccountFilterResponse>> filterAccounts(@RequestBody @Valid AccountFilterRequest request) {
         return ApiResponse.<List<AccountFilterResponse>>builder()
+                .message("Tìm kiếm tài khoản thành công")
                 .result(fmisAccountNumberService.filterAccounts(request))
                 .build();
     }
@@ -41,6 +42,7 @@ public class UserController {
     @PostMapping("/create")
     ApiResponse<AccountResponse> createAccount(@Valid @RequestBody CreateAccountRequest request) {
         return ApiResponse.<AccountResponse>builder()
+                .message("Thêm tài khoản thành công")
                 .result(fmisAccountNumberService.createAccount(request))
                 .build();
     }
@@ -64,4 +66,6 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    //----------------------------------------------------------------------------
+
 }

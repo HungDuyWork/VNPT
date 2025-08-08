@@ -13,6 +13,7 @@ import com.test.vnpt.repository.FmisAccountNumberRepository;
 import com.test.vnpt.service.FmisAccountNumberService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +58,8 @@ public class FmisAccountNumberServiceImpl implements FmisAccountNumberService {
         String maNh = BankCodeMapper.getMaNh(request.getBankCode());
         // Kiểm tra loại tài khoản
         String description = getDbDescriptionByType(request.getType());
+//        FmisAccountNumber bo = new FmisAccountNumber();
+//        BeanUtils.copyProperties(request, bo);
         FmisAccountNumber entity = FmisAccountNumber.builder()
                 .bankCode(request.getBankCode())
                 .maNh(maNh)
@@ -103,6 +106,7 @@ public class FmisAccountNumberServiceImpl implements FmisAccountNumberService {
             throw new EntityNotFoundException("Tài khoản không tồn tại");
         } else {
             account.setStatus(-1); // Đánh dấu là không hoạt động
+            fmisAccountNumberRepository.save(account);
         }
     }
 }
